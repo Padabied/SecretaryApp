@@ -49,8 +49,8 @@
 <body>
 <div class="login-container">
     <form action="login" method="post">
-        <input type="text" name="username" placeholder="Логин" required>
-        <input type="password" name="password" placeholder="Пароль" required>
+        <input type="text" name="username" placeholder="Login" required>
+        <input type="password" name="password" placeholder="Password" required>
         <button type="submit">ОК</button>
     </form>
 </div>

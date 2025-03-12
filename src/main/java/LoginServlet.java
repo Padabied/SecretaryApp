@@ -38,12 +38,8 @@ public class LoginServlet extends HttpServlet {
                 session.setAttribute("user", username);
                 logger.info("User {} logged in successfully", username);
 
-                resp.sendRedirect("main.jsp");
-//                //логика админа или юзера
-//                String role = resultSet.getString("role");
-//                if (role.equals("USER")) resp.sendRedirect("booking.jsp");
-//                else if (role.equals("ADMIN")) resp.sendRedirect("adminPage.jsp");
-//                else logger.error("Error of Role");
+                //resp.sendRedirect("main.jsp");
+                resp.sendRedirect(req.getContextPath() + "/secretary");
 
             } else {
                 // Неудачная авторизация

@@ -17,8 +17,8 @@ public class DBConnector {
     static {
         try {
             HikariConfig config = new HikariConfig();
-            config.setJdbcUrl("jdbc:mysql://localhost:3306/hotel");
-            config.setUsername("Padabied");
+            config.setJdbcUrl("jdbc:mysql://localhost:3306/secretary");
+            config.setUsername("root");
             config.setPassword("Hetfield123!");
             config.setDriverClassName("com.mysql.cj.jdbc.Driver");
             config.setMaximumPoolSize(10);
