@@ -1,0 +1,32 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="JavaEE_App:war exploded">
+    <output-path>$PROJECT_DIR$/target/JavaEE_App-1.0-SNAPSHOT</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <exploded>true</exploded>
+        <module>JavaEE_App</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="root">
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="JavaEE_App" />
+        </element>
+        <element id="directory" name="lib">
+          <element id="library" level="project" name="Maven: com.mysql:mysql-connector-j:8.0.33" />
+          <element id="library" level="project" name="Maven: com.google.protobuf:protobuf-java:3.21.9" />
+          <element id="library" level="project" name="Maven: org.apache.logging.log4j:log4j-api:2.17.0" />
+          <element id="library" level="project" name="Maven: org.apache.logging.log4j:log4j-core:2.17.0" />
+          <element id="library" level="project" name="Maven: com.google.code.gson:gson:2.10.1" />
+          <element id="library" level="project" name="Maven: com.zaxxer:HikariCP:5.0.1" />
+          <element id="library" level="project" name="Maven: org.slf4j:slf4j-api:2.0.0-alpha1" />
+        </element>
+      </element>
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/target/JavaEE_App-1.0-SNAPSHOT/META-INF/MANIFEST.MF" />
+      </element>
+      <element id="javaee-facet-resources" facet="JavaEE_App/web/Web" />
+    </root>
+  </artifact>
+</component>
