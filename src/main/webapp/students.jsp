@@ -13,7 +13,6 @@
         .background {
             background-image: url('${pageContext.request.contextPath}/resources/students.jpg');
             background-size: cover;
-            /*background-position: center;*/
             height: 100%;
             display: flex;
             flex-direction: column;
@@ -169,8 +168,40 @@
     // Функция для поиска студентов по группе
     function findStudentsByGroup() {
         const groupNumber = document.getElementById('groupNumber').value;
-        // Здесь будет вызов сервлета для поиска студентов
+        if (!groupNumber) {
+            alert("Введите номер группы!");
+            return;
+        }
+
+        fetch("/studentsByGroup?groupNumber=" + encodeURIComponent(groupNumber))
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Ошибка при получении данных");
+                }
+                return response.json();
+            })
+            .then(data => {
+                const resultDiv = document.getElementById("groupResult");
+                resultDiv.innerHTML = "";
+                if (data.length === 0) {
+                    resultDiv.innerHTML = "<p>Студенты не найдены.</p>";
+                } else {
+                    const list = document.createElement("ul");
+                    data.forEach(student => {
+                        const listItem = document.createElement("li");
+                        listItem.textContent = student;
+                        list.appendChild(listItem);
+                    });
+                    resultDiv.appendChild(list);
+                }
+            })
+            .catch(error => {
+                console.error("Ошибка:", error);
+                alert("Ошибка при загрузке данных.");
+            });
     }
+
+
 
     // Функция для поиска студентов по оценке и дисциплине
     function findStudentsByMark() {

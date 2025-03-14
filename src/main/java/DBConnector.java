@@ -25,8 +25,10 @@ public class DBConnector {
             config.setIdleTimeout(60000);
 
             dataSource = new HikariDataSource(config);
+            System.out.println("Успешно подключено к БД");
         } catch (Exception e) {
             e.printStackTrace();
+            System.out.println("Ошибка подключения к БД");
         }
     }
 
