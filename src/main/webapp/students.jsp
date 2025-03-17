@@ -101,6 +101,53 @@
             margin: 5px 0;
             height: 50px;
         }
+        /* Модальное окно */
+        #modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* затемнение фона */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        #modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+
+        #modal ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        #modal li {
+            margin: 5px 0;
+        }
+
+        #ok-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        #close-button {
+            font-size: 1.5em;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
 
     </style>
 </head>
@@ -155,6 +202,16 @@
     </div>
 </div>
 
+<!-- Модальное окно -->
+<div id="modal" style="display: none;">
+    <div id="modal-content">
+        <span id="close-button" style="cursor: pointer;">&times;</span>
+        <h2>Список студентов</h2>
+        <ul id="student-list"></ul>
+        <button id="ok-button">ОК</button>
+    </div>
+</div>
+
 <script>
     // Функции для управления всплывающими окнами
     function showPopup(id) {
@@ -165,7 +222,6 @@
         document.getElementById(id).style.display = 'none';
     }
 
-    // Функция для поиска студентов по группе
     function findStudentsByGroup() {
         const groupNumber = document.getElementById('groupNumber').value;
         if (!groupNumber) {
@@ -181,19 +237,29 @@
                 return response.json();
             })
             .then(data => {
-                const resultDiv = document.getElementById("groupResult");
-                resultDiv.innerHTML = "";
+                const modal = document.getElementById('modal');
+                const studentList = document.getElementById('student-list');
+                const closeButton = document.getElementById('close-button');
+                const okButton = document.getElementById('ok-button');
+
+                studentList.innerHTML = ""; // очищаем список перед добавлением новых данных
+
                 if (data.length === 0) {
-                    resultDiv.innerHTML = "<p>Студенты не найдены.</p>";
+                    studentList.innerHTML = "<li>Студенты не найдены.</li>";
                 } else {
-                    const list = document.createElement("ul");
                     data.forEach(student => {
                         const listItem = document.createElement("li");
                         listItem.textContent = student;
-                        list.appendChild(listItem);
+                        studentList.appendChild(listItem);
                     });
-                    resultDiv.appendChild(list);
                 }
+
+                // Показываем модальное окно
+                modal.style.display = "flex";
+
+                // Закрытие модального окна
+                closeButton.onclick = () => modal.style.display = "none";
+                okButton.onclick = () => modal.style.display = "none";
             })
             .catch(error => {
                 console.error("Ошибка:", error);
@@ -201,14 +267,52 @@
             });
     }
 
-
-
     // Функция для поиска студентов по оценке и дисциплине
     function findStudentsByMark() {
         const mark = document.getElementById('mark').value;
         const disciplineCode = document.getElementById('disciplineCode').value;
-        // Здесь будет вызов сервлета для поиска студентов
+
+        if (!mark || !disciplineCode) {
+            alert("Введите оценку и код дисциплины!");
+            return;
+        }
+
+        fetch("/studentsByMark?mark=" + encodeURIComponent(mark) + "&disciplineCode=" + encodeURIComponent(disciplineCode))
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Ошибка при получении данных");
+                }
+                return response.json();
+            })
+            .then(data => {
+                const modal = document.getElementById('modal');
+                const studentList = document.getElementById('student-list');
+                const closeButton = document.getElementById('close-button');
+                const okButton = document.getElementById('ok-button');
+
+                studentList.innerHTML = "";
+
+                if (data.length === 0) {
+                    studentList.innerHTML = "<li>Студенты не найдены.</li>";
+                } else {
+                    data.forEach(student => {
+                        const listItem = document.createElement("li");
+                        listItem.textContent = student;
+                        studentList.appendChild(listItem);
+                    });
+                }
+
+                modal.style.display = "flex";
+
+                closeButton.onclick = () => modal.style.display = "none";
+                okButton.onclick = () => modal.style.display = "none";
+            })
+            .catch(error => {
+                console.error("Ошибка:", error);
+                alert("Ошибка при загрузке данных.");
+            });
     }
+
 
     // Функция для добавления студента
     function addStudent() {
