@@ -192,13 +192,8 @@
     <!-- Всплывающее окно для удаления студента -->
     <div id="deleteStudentPopup" class="byGroup">
         <input type="text" id="studentId" placeholder="Enter student ID">
-        <button onclick="confirmDeleteStudent()">OK</button>
+        <button onclick="deleteStudent()">OK</button>
         <button onclick="hidePopup('deleteStudentPopup')">Cancel</button>
-        <div id="deleteConfirmation" style="display: none;">
-            <p>Студент <span id="studentName"></span> группа <span id="studentGroup"></span> будет удален. Продолжить?</p>
-            <button onclick="deleteStudent()">Да</button>
-            <button onclick="hidePopup('deleteStudentPopup')">Нет</button>
-        </div>
     </div>
 </div>
 
@@ -353,20 +348,36 @@
     }
 
 
-    // Функция для подтверждения удаления студента
-    function confirmDeleteStudent() {
-        const studentId = document.getElementById('studentId').value;
-        // Здесь будет вызов сервлета для получения данных о студенте
-        document.getElementById('studentName').innerText = "Имя студента";
-        document.getElementById('studentGroup').innerText = "Группа студента";
-        document.getElementById('deleteConfirmation').style.display = 'block';
-    }
-
     // Функция для удаления студента
     function deleteStudent() {
-        const studentId = document.getElementById('studentId').value;
-        // Здесь будет вызов сервлета для удаления студента
+        const studentId = document.getElementById('studentId').value.trim();
+
+        if (!studentId) {
+            alert("Некорректные данные");
+            return;
+        }
+
+        fetch("/deleteStudent", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: new URLSearchParams({ studentId: studentId })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    alert("Студент успешно удалён");
+                }
+            })
+            .catch(error => {
+                console.error("Ошибка:", error);
+                alert("Ошибка при удалении студента.");
+            });
     }
+
 </script>
 </body>
 </html>
