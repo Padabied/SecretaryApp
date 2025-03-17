@@ -316,12 +316,42 @@
 
     // Функция для добавления студента
     function addStudent() {
-        const fullName = document.getElementById('fullName').value;
-        const groupId = document.getElementById('groupId').value;
-        const email = document.getElementById('email').value;
-        const phone = document.getElementById('phone').value;
-        // Здесь будет вызов сервлета для добавления студента
+        const fullName = document.getElementById('fullName').value.trim();
+        const groupId = document.getElementById('groupId').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+
+        if (!fullName || !groupId || !email || !phone) {
+            alert("Некорректные данные");
+            return;
+        }
+
+        fetch("/addStudent", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: new URLSearchParams({
+                fullName: fullName,
+                groupId: groupId,
+                email: email,
+                phone: phone
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    alert("Студент успешно добавлен");
+                }
+            })
+            .catch(error => {
+                console.error("Ошибка:", error);
+                alert("Ошибка при добавлении студента.");
+            });
     }
+
 
     // Функция для подтверждения удаления студента
     function confirmDeleteStudent() {
