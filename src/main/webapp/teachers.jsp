@@ -140,7 +140,7 @@
     </div>
 
     <div id="invitedToMeetingPopup" class="inputStyle">
-        <input type="text" id="meetingDate" placeholder="Enter meeting date">
+        <input type="text" id="meetingDate" placeholder="Enter date (YYYY-MM-DD)">
         <button onclick="getInvitedToMeetingByDate()">OK</button>
         <button onclick="hidePopup('invitedToMeetingPopup')">Cancel</button>
         <div id="invitedResult"></div>
@@ -216,7 +216,42 @@
             alert("Введите код дисциплины!");
             return;
         }
-        //Логика функции
+        fetch("/teachersByDisciplineCode?disciplineCode=" + encodeURIComponent(disciplineCode))
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Ошибка при получении данных");
+                }
+                return response.json();
+            })
+            .then(data => {
+                const modal = document.getElementById('modal');
+                const teachersList = document.getElementById('result-list');
+                const closeButton = document.getElementById('close-button');
+                const okButton = document.getElementById('ok-button');
+
+                teachersList.innerHTML = "";
+
+                if (data.length === 0) {
+                    teachersList.innerHTML = "<li>Преподаватели не найдены. Проверьте код дисциплины.</li>";
+                } else {
+                    data.forEach(teacher => {
+                        const listItem = document.createElement("li");
+                        listItem.innerHTML = teacher.replace(/\n/g, "<br>");
+                        teachersList.appendChild(listItem);
+                    });
+                }
+
+                // Показываем модальное окно
+                modal.style.display = "flex";
+
+                // Закрытие модального окна
+                closeButton.onclick = () => modal.style.display = "none";
+                okButton.onclick = () => modal.style.display = "none";
+            })
+            .catch(error => {
+                console.error("Ошибка:", error);
+                alert("Ошибка при загрузке данных.");
+            });
     }
 
     function getInvitedToMeetingByDate() {
@@ -225,7 +260,42 @@
             alert("Введите дату заседания!");
             return;
         }
-        //Логика функции
+        fetch("/invitedToMeetingServlet?meetingDate=" + encodeURIComponent(meetingDate))
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Ошибка при получении данных");
+                }
+                return response.json();
+            })
+            .then(data => {
+                const modal = document.getElementById('modal');
+                const teachersList = document.getElementById('result-list');
+                const closeButton = document.getElementById('close-button');
+                const okButton = document.getElementById('ok-button');
+
+                teachersList.innerHTML = "";
+
+                if (data.length === 0) {
+                    teachersList.innerHTML = "<li>Преподаватели не найдены. Проверьте дату заседания.</li>";
+                } else {
+                    data.forEach(teacher => {
+                        const listItem = document.createElement("li");
+                        listItem.innerHTML = teacher.replace(/\n/g, "<br>");
+                        teachersList.appendChild(listItem);
+                    });
+                }
+
+                // Показываем модальное окно
+                modal.style.display = "flex";
+
+                // Закрытие модального окна
+                closeButton.onclick = () => modal.style.display = "none";
+                okButton.onclick = () => modal.style.display = "none";
+            })
+            .catch(error => {
+                console.error("Ошибка:", error);
+                alert("Ошибка при загрузке данных.");
+            });
     }
 </script>
 </body>
