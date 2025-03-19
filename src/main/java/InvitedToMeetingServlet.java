@@ -1,4 +1,6 @@
 import com.google.gson.Gson;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -14,6 +16,8 @@ import java.util.List;
 
 @WebServlet(name = "InvitedToMeetingServlet", value = "/invitedToMeetingServlet")
 public class InvitedToMeetingServlet extends HttpServlet {
+
+    private static final Logger logger = LogManager.getLogger(LoginServlet.class);
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("application/json");
@@ -25,6 +29,7 @@ public class InvitedToMeetingServlet extends HttpServlet {
         if (meetingDate == null || meetingDate.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             out.write("{\"error\": \"Missing meeting date\"}");
+            logger.warn("Missing meeting date");
             return;
         }
         List<String> teachers = new ArrayList<>();
@@ -39,9 +44,11 @@ public class InvitedToMeetingServlet extends HttpServlet {
             }
             String json = new Gson().toJson(teachers);
             out.write(json);
+            logger.info("SUCCESS invited to meeting show");
         } catch (SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             out.write("{\"error\": \"Database error\"}");
+            logger.error("SQL exception throw", e);
             e.printStackTrace();
         }
     }

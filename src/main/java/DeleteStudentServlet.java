@@ -1,3 +1,6 @@
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -12,6 +15,8 @@ import java.sql.SQLException;
 @WebServlet("/deleteStudent")
 public class DeleteStudentServlet extends HttpServlet {
 
+    private static final Logger logger = LogManager.getLogger(LoginServlet.class);
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("application/json");
@@ -23,6 +28,7 @@ public class DeleteStudentServlet extends HttpServlet {
         if (studentIdStr == null || studentIdStr.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             out.write("{\"error\": \"Некорректные данные\"}");
+            logger.warn("Incorrect data");
             return;
         }
 
@@ -37,20 +43,24 @@ public class DeleteStudentServlet extends HttpServlet {
                 int rowsDeleted = stmt.executeUpdate();
                 if (rowsDeleted > 0) {
                     out.write("{\"success\": \"Студент успешно удалён\"}");
+                    logger.info("Student deleted successfully");
                 } else {
                     response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                     //System.out.println("ничего не удалено из БД");
                     out.write("{\"error\": \"Некорректные данные\"}");
+                    logger.warn("Incorrect data");
                 }
             }
         } catch (NumberFormatException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             //System.out.println("number format");
             out.write("{\"error\": \"Некорректные данные\"}");
+            logger.error("Incorrect data: ", e);
         } catch (SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             //System.out.println("sxl exception");
             out.write("{\"error\": \"Ошибка базы данных\"}");
+            logger.error("SQL exception throw ", e);
             e.printStackTrace();
         }
     }

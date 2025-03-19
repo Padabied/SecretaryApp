@@ -1,4 +1,6 @@
 import com.google.gson.Gson;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -15,6 +17,8 @@ import java.util.List;
 @WebServlet("/studentsByMark")
 public class StudentByMarkServlet extends HttpServlet {
 
+    private static final Logger logger = LogManager.getLogger(LoginServlet.class);
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("application/json");
@@ -27,6 +31,7 @@ public class StudentByMarkServlet extends HttpServlet {
         if (markStr == null || markStr.isEmpty() || disciplineCode == null || disciplineCode.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             out.write("{\"error\": \"Missing mark or discipline code\"}");
+            logger.warn("Missing discipline code");
             return;
         }
 
@@ -47,14 +52,16 @@ public class StudentByMarkServlet extends HttpServlet {
 
                 String json = new Gson().toJson(students);
                 out.write(json);
+                logger.info("SUCCESS student by mark show");
             } catch (SQLException e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 out.write("{\"error\": \"Database error\"}");
-                e.printStackTrace();
+                logger.error("SQL exception throw ", e);
             }
         } catch (NumberFormatException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             out.write("{\"error\": \"Invalid mark format\"}");
+            logger.error("Invalid mark format ", e);
         }
     }
 }

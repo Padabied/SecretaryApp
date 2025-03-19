@@ -1,6 +1,8 @@
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -13,6 +15,7 @@ import java.sql.SQLException;
 public class DBConnector {
 
     private static HikariDataSource dataSource;
+    private static final Logger logger = LogManager.getLogger(LoginServlet.class);
 
     static {
         try {
@@ -26,9 +29,11 @@ public class DBConnector {
 
             dataSource = new HikariDataSource(config);
             System.out.println("Успешно подключено к БД");
+            logger.info("DB starts successfully");
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Ошибка подключения к БД");
+            logger.error("DB start FAILED");
         }
     }
 

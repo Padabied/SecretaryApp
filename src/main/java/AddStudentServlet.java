@@ -1,3 +1,6 @@
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -15,6 +18,7 @@ public class AddStudentServlet extends HttpServlet {
 
     private static final String EMAIL_REGEX = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
     private static final String PHONE_REGEX = "^(37529|37533|37525)\\d{7}$";
+    private static final Logger logger = LogManager.getLogger(LoginServlet.class);
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -34,18 +38,21 @@ public class AddStudentServlet extends HttpServlet {
 
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             out.write("{\"error\": \"Некорректные данные\"}");
+            logger.warn("Incorrect data");
             return;
         }
 
         if (!Pattern.matches(EMAIL_REGEX, email)) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             out.write("{\"error\": \"Некорректный email\"}");
+            logger.warn("Incorrect email");
             return;
         }
 
         if (!Pattern.matches(PHONE_REGEX, phone)) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             out.write("{\"error\": \"Некорректный телефон\"}");
+            logger.warn("Incorrect phone number");
             return;
         }
 
@@ -63,18 +70,21 @@ public class AddStudentServlet extends HttpServlet {
                 int rowsInserted = stmt.executeUpdate();
                 if (rowsInserted > 0) {
                     out.write("{\"success\": \"Студент успешно добавлен\"}");
+                    logger.info("Student added");
                 } else {
                     response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                     out.write("{\"error\": \"Ошибка при добавлении студента\"}");
+                    logger.warn("FAILED to add student");
                 }
             }
         } catch (NumberFormatException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             out.write("{\"error\": \"Некорректный ID группы\"}");
+            logger.error("Incorrect group id: ", e);
         } catch (SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             out.write("{\"error\": \"Один из параметров введен неверно\"}");
-            e.printStackTrace();
+            logger.error("SQL exception throw", e);
         }
     }
 }

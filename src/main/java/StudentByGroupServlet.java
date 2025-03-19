@@ -1,4 +1,7 @@
 import com.google.gson.Gson;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -13,6 +16,8 @@ import java.util.List;
 @WebServlet("/studentsByGroup")
 public class StudentByGroupServlet extends HttpServlet {
 
+    private static final Logger logger = LogManager.getLogger(LoginServlet.class);
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("application/json");
@@ -24,30 +29,28 @@ public class StudentByGroupServlet extends HttpServlet {
         if (groupNumber == null || groupNumber.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             out.write("{\"error\": \"Missing group number\"}");
+            logger.warn("Missing group number");
             return;
         }
 
         List<String> students = new ArrayList<>();
         try (Connection conn = DBConnector.getConnection();
              CallableStatement stmt = conn.prepareCall("{CALL GetStudentsByGroup(?)}")) {
-            //System.out.println("Подключение к БД успешно");
             stmt.setString(1, groupNumber);
             ResultSet rs = stmt.executeQuery();
-            //System.out.println("RS существует");
 
 
             while (rs.next()) {
-                //System.out.println(rs.getString("full_name"));
                 students.add(rs.getString("full_name"));
             }
 
             String json = new Gson().toJson(students);
-            //System.out.println("json создан");
             out.write(json);
+            logger.info("SUCCESS student by group show");
         } catch (SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             out.write("{\"error\": \"Database error\"}");
-            e.printStackTrace();
+            logger.error("SQL exception throw");
         }
     }
 }
