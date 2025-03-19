@@ -52,7 +52,6 @@
     <div class="navbar">
         <button onclick="window.location.href='students.jsp'">students</button>
         <button onclick="window.location.href='teachers.jsp'">teachers</button>
-        <button onclick="window.location.href='meetings.jsp'">meetings</button>
     </div>
 </div>
 </body>
